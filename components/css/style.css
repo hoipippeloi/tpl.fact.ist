@@ -56,6 +56,10 @@ p {
     margin:10px 0;
 }
 
+li {
+  font-size: 0.9em !important;
+}
+
 a.link {
   color:rgb(8, 67, 230) !important;
   text-decoration: none !important;

@@ -11,7 +11,7 @@
 
 <svelte:head>
 	<title>Evidence starter template</title>
-	<link rel="stylesheet" href="https://unpkg.com/franken-ui-releases@0.0.11/dist/green.min.css" />
+	<link rel="stylesheet" href="https://unpkg.com/franken-ui-releases@0.0.11/dist/orange.min.css" />
 	<script src="https://cdn.jsdelivr.net/npm/uikit@3.20.8/dist/js/uikit.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/uikit@3.20.8/dist/js/uikit-icons.min.js"></script>
 </svelte:head>
