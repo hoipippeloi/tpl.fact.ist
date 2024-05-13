@@ -1,0 +1,28 @@
+[
+    {
+      "label":"register",
+      "order": 1,
+      "show": false
+    },
+    {
+      "label":"logout",
+      "order": 2,
+      "show": false
+    },
+    {
+      "label":"login",
+      "order": 3,
+      "show": false
+    },
+    {
+      "label":"account",
+      "order": 0,
+      "show": true
+    },
+    {
+      "label":"game design",
+      "order": 0,
+      "show": true
+    }
+  ]
+  
