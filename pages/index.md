@@ -1,6 +1,6 @@
-<div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
-    <h3 class="uk-card-title">Default</h3>
-    <p>Lorem ipsum <a href="#">dolor</a> sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+<div class="uk-card uk-card-default uk-card-body uk-width-1-@m">
+    <h3 class="uk-card-title">Welcome</h3>
+    <p>This starter contains the logic and capabilities of evidence.dev and has franken ui integrated to add style and components to the ui.</p>
 </div>
 <br />
 
@@ -8,13 +8,29 @@
 
 
 <ul class="mt-8" uk-tab>
-    <li><a href="#">Testing this</a></li>
-    <li><a href="#">Item</a></li>
-    <li><a href="#">Next item</a></li>
+    <li><a href="#">Evidence.dev</a></li>
+    <li><a href="#">Franken UI</a></li>
+    <li><a href="#">Sveltekit</a></li>
 </ul>
 
-<ul class="uk-switcher" style="padding:10px;">
-    <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li>
-    <li>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-    <li>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur, sed do eiusmod.</li>
+<ul class="uk-switcher" style="padding:20px 10px;">
+    <li>
+    Evidence is a modern tool designed to streamline the process of building analytics for developers. It allows users to create SQL queries and directly transform these queries into interactive dashboards and reports, all within the comfort of their code editor. This platform leverages the power of SQL and Markdown to make data visualization and reporting more accessible and version controllable, akin to how software development is managed. By integrating with existing databases, Evidence.dev facilitates real-time data analysis, enabling teams to make informed decisions quickly. Its focus on developer experience and efficiency makes it a valuable asset for teams looking to enhance their data-driven decision-making processes. 
+    <br /><br />
+    Find Evidence.dev at <a class="link" href="https://evidence.dev" target="_blank">https://evidence.dev &rarr;</a>
+    </li>
+    
+    <li>
+    Franken UI is a user interface (UI) design concept that emphasizes the assembly of interfaces from pre-existing components or parts, much like Frankenstein's monster was assembled from various pieces. This approach leverages a modular design philosophy, where UI elements such as buttons, forms, and navigation bars are reused across different parts of an application or even across multiple projects. The idea behind Franken UI is to streamline the design and development process by reusing components that have already been tested and proven effective, thus saving time and resources. However, the challenge with this approach is ensuring that the assembled components work harmoniously together, both functionally and aesthetically, to provide a cohesive user experience. Franken UI encourages efficiency and consistency but requires careful consideration to avoid a disjointed or patchwork appearance.
+    <br /><br />
+    Franken UI can be found at <a class="link" href="https://www.franken-ui.dev/" target="_blank">https://www.franken-ui.dev/ &rarr;</a>
+    </li>
+    
+    <li>
+    SvelteKit is a modern framework for building web applications, built on top of Svelte, a popular JavaScript compiler. Unlike traditional frameworks that do most of the work in the browser, Svelte shifts that work into a compile step that happens when you build your app, resulting in highly efficient, vanilla JavaScript at runtime. SvelteKit enhances this by providing a more comprehensive solution for building full-fledged applications.
+    <br /><br />
+    SvelteKit is designed to be versatile, supporting various rendering strategies out of the box, including server-side rendering (SSR), static site generation (SSG), and client-side rendering. This makes it suitable for a wide range of projects, from static blogs to dynamic, interactive web applications.
+    <br /><br />
+    Sveltekit can be found at <a class="link" href="https://kit.svelte.dev/" target="_blank">https://kit.svelte.dev/ &rarr;</a>
+    </li>
 </ul>

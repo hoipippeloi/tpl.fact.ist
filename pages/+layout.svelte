@@ -1,6 +1,7 @@
 <script>
 	import '@evidence-dev/tailwind/fonts.css';
 	import '../app.css';
+	import '$lib/css/style.css';
 	import { EvidenceDefaultLayout } from '@evidence-dev/core-components';
 	export let data;
 
@@ -16,9 +17,10 @@
 </svelte:head>
 
 <EvidenceDefaultLayout {data}
+	logo="/img/icon.png"
 	title='My App'
   	neverShowQueries=true
-  	githubRepo='https://github.com/hoipippeloi/_evidence-starter-template'
+  	githubRepo='https://github.com/hoipippeloi/tpl.fact.ist'
   	hideSidebar=true
   	fullWidth=true
   	maxWidth=1440
