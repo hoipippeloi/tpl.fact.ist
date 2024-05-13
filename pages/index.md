@@ -17,7 +17,7 @@
     <li>
     Evidence is a modern tool designed to streamline the process of building analytics for developers. It allows users to create SQL queries and directly transform these queries into interactive dashboards and reports, all within the comfort of their code editor. This platform leverages the power of SQL and Markdown to make data visualization and reporting more accessible and version controllable, akin to how software development is managed. By integrating with existing databases, Evidence.dev facilitates real-time data analysis, enabling teams to make informed decisions quickly. Its focus on developer experience and efficiency makes it a valuable asset for teams looking to enhance their data-driven decision-making processes. 
     <br /><br />
-    Find Evidence.dev at <a class="link" href="https://evidence.dev" target="_blank">https://evidence.dev &rarr;</a>
+    Find Evidence at <a class="link" href="https://evidence.dev" target="_blank">https://evidence.dev &rarr;</a>
     </li>
     
     <li class="uk-animation-scale-up uk-animation-fast">
@@ -59,3 +59,8 @@
     </div>
 </div>
 
+<div class="uk-alert uk-alert-default uk-animation-slide-bottom-small uk-margin-top" uk-alert>
+    <div>
+        Don't know how to add content? Visit the documentation site at evidence.dev.
+    </div>
+</div>
