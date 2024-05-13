@@ -29,7 +29,7 @@
 
 <div id="offcanvas-nav" uk-offcanvas="mode: reveal;">
   <div class="uk-offcanvas-bar">
-      <ul class="uk-nav uk-nav-default" uk-nav>
+      <ul class="uk-nav uk-nav-default uk-animation-slide-bottom-medium" style="padding:15px 5px;" uk-nav>
           {#each pages as item}
               {#if item.children.length === 0}
                   <li><a href={item.href}>{capitalizeFirstLetter(item.label)}</a></li>

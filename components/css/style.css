@@ -71,6 +71,23 @@ a.link:hover {
   text-decoration: none !important;
 }
 
+ul.uk-nav li a {
+  text-decoration: none !important;
+  color:#777;
+  padding:5px 10px;
+  border:1px solid #fff;
+  font-size: 1.2em !important;
+  font-weight: 700;
+}
+
+ul.uk-nav li a:hover {
+  text-decoration: none !important;
+  color:#111;
+  background-color: #eee;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
 /* Layout styling */
 
 div.items-start {
