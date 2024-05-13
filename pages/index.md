@@ -1,3 +1,8 @@
+---
+title: Evidence starter template
+hide_title: true
+---
+
 <div class="uk-card uk-card-default uk-card-body uk-width-1-@m uk-animation-slide-top-medium">
     <h3 class="uk-card-title">Welcome</h3>
     <p>This starter contains the logic and capabilities of evidence.dev and has franken ui integrated to add style and components to the ui.</p>

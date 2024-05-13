@@ -1,3 +1,7 @@
+---
+title: Evidence starter template
+hide_title: true
+---
 
 <div class="uk-card uk-card-default uk-card-body uk-width-1-@m uk-animation-slide-left-medium">
     <h3 class="uk-card-title">Apps</h3>
