@@ -1,20 +1,27 @@
 <script>
+    import { onMount } from 'svelte';
     import navConfig from './NavMenuConfig.json';
     export let data;
-    let pages = data.pagesManifest.children;
+    let pages = [];
 
-    // Create a new sorted array for items that are found in the config
-    let sortedPages = pages
-        .filter(page => navConfig.find(cfg => cfg.label === page.label))
-        .map(page => ({...page, ...navConfig.find(cfg => cfg.label === page.label)}))
-        .filter(page => page.show !== false) 
-        .sort((a, b) => a.order - b.order);
+    onMount(() => {
+        if (data && data.pagesManifest && data.pagesManifest.children) {
+            let pagesData = data.pagesManifest.children;
+            console.log('pages', pagesData);
 
-    // Create a new array for items that are not found in the config
-    let nonConfigPages = pages.filter(page => !navConfig.find(cfg => cfg.label === page.label));
-  
-    // Combine the two arrays making sure the sorted pages come first
-    pages = [...sortedPages, ...nonConfigPages];
+            let sortedPages = pagesData
+                .filter(page => navConfig.find(cfg => cfg.label === page.label))
+                .map(page => ({...page, ...navConfig.find(cfg => cfg.label === page.label)}))
+                .filter(page => page.show !== false) 
+                .sort((a, b) => a.order - b.order);
+
+            let nonConfigPages = pagesData.filter(page => !navConfig.find(cfg => cfg.label === page.label));
+          
+            pages = [...sortedPages, ...nonConfigPages];
+        } else {
+            console.error('No pages data available');
+        }
+    });
 
     function capitalizeFirstLetter(string) {
         if (!string) return string;
@@ -22,6 +29,7 @@
     }
 </script>
 
+{#if pages && pages.length > 0}
   
 <a class="nav-menu" uk-toggle="target: #offcanvas-nav" href>
   <span uk-icon="icon: menu; ratio: 1"></span>
@@ -51,6 +59,8 @@
       <button class="uk-offcanvas-close" type="button" uk-close></button>
   </div>
 </div>
+
+{/if}
 
 <style>
 .nav-menu {
