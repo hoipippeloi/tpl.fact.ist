@@ -14,7 +14,7 @@ hide_title: true
 
 <ul class="mt-8" uk-tab>
     <li><a href="#">Evidence.dev</a></li>
-    <li><a href="#">Franken UI</a></li>
+    <li><a href="#">UIKit</a></li>
     <li><a href="#">Sveltekit</a></li>
 </ul>
 
@@ -26,9 +26,9 @@ hide_title: true
     </li>
     
     <li class="uk-animation-scale-up uk-animation-fast">
-    Franken UI is a user interface (UI) design concept that emphasizes the assembly of interfaces from pre-existing components or parts, much like Frankenstein's monster was assembled from various pieces. This approach leverages a modular design philosophy, where UI elements such as buttons, forms, and navigation bars are reused across different parts of an application or even across multiple projects. The idea behind Franken UI is to streamline the design and development process by reusing components that have already been tested and proven effective, thus saving time and resources. However, the challenge with this approach is ensuring that the assembled components work harmoniously together, both functionally and aesthetically, to provide a cohesive user experience. Franken UI encourages efficiency and consistency but requires careful consideration to avoid a disjointed or patchwork appearance.
+    UIkit is a lightweight and modular front-end framework for developing fast and powerful web interfaces.
     <br /><br />
-    Franken UI can be found at <a class="link" href="https://www.franken-ui.dev" target="_blank">https://www.franken-ui.dev &rarr;</a>
+    UIKit can be found at <a class="link" href="https://getuikit.com/docs/introduction" target="_blank">https://getuikit.com &rarr;</a>
     </li>
     
     <li class="uk-animation-scale-up uk-animation-fast">
