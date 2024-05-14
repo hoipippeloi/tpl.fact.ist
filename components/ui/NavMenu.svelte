@@ -27,12 +27,14 @@
   <span uk-icon="icon: menu; ratio: 1"></span>
 </a>
 
-<div id="offcanvas-nav" uk-offcanvas="mode: reveal;">
+<div id="offcanvas-nav" uk-offcanvas="overlay: true; mode: push;">
   <div class="uk-offcanvas-bar">
-      <ul class="uk-nav uk-nav-default uk-animation-slide-bottom-medium" style="padding:15px 5px;" uk-nav>
+      <h4>Menu</h4>
+      <hr />
+      <ul class="uk-nav uk-nav-default" uk-nav>
           {#each pages as item}
               {#if item.children.length === 0}
-                  <li><a href={item.href}>{capitalizeFirstLetter(item.label)}</a></li>
+                  <li><a href="{item.href}/">{capitalizeFirstLetter(item.label)}</a></li>
               {/if}
               {#if item.children.length > 0}
                   <li class="uk-parent">
