@@ -4,9 +4,9 @@
 	import { EvidenceDefaultLayout } from '@evidence-dev/core-components';
 	export let data;
 
-	import "$lib/uikit-3.17.11/css/uikit.min.css";
-	import "$lib/uikit-3.17.11/js/uikit.min.js";
-	import "$lib/uikit-3.17.11/js/uikit-icons.min.js";
+	import "$lib/uikit-3.20.10/css/uikit.min.css";
+	import "$lib/uikit-3.20.10/js/uikit.min.js";
+	import "$lib/uikit-3.20.10/js/uikit-icons.min.js";
 	import "$lib/css/style.css";
 
 	import NavMenu from "$lib/ui/NavMenu.svelte";
