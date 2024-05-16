@@ -24,22 +24,24 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 2.5em !important;
+  font-size: 2.8em !important;
   margin:10px 0;
-  font-weight: 800 !important;
+  font-weight: 900 !important;
+  color:#06A51A;
 }
 
 h2 {
-  font-size: 1.8em !important;
+  font-size: 2em !important;
   margin:5px 0;
   font-weight: 800 !important;
-  color:#999 !important;
+  color:#333 !important;
 }
 
 h3 {
-  font-size: 1.3em !important;
+  font-size: 1.6em !important;
   margin:5px 0;
   font-weight: 700 !important;
+  color:#555 !important;
 }
 
 h4 {
@@ -51,7 +53,6 @@ h4 {
 
 p {
     font-family: 'Inter', Verdana, sans-serif !important;
-    font-size: 1em;
     padding:2px;
     margin:10px 0;
 }
@@ -61,9 +62,10 @@ li {
 }
 
 a.link {
-  color:rgb(8, 67, 230) !important;
+  color:#06871A !important;
   text-decoration: none !important;
   padding:0 3px;
+  font-weight: 500;
 }
 
 a.link:hover {
@@ -103,10 +105,20 @@ header > div > button > svg {
   display: none !important;
 }
 
-/* ##################################################### 
-  Evidence KPI styling 
-##################################################### */
+div.text-xl span {
+  font-size:1.5em !important;
+  font-weight: 700 !important;
+  color: #1b251c;
+  margin-left:2px;
+}
 
-div.kpi {
-  height:80px;
+p.text-sm {
+  color:#8B998C;
+}
+
+svg g text {
+  fill: #8c978c !important;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+  font-size: 0.8em !important;
+  font-weight: 600;
 }
