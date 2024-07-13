@@ -1,320 +1,393 @@
----
-title: fc24.fact.ist / home
-hide_title: true
----
+<script>
+  import SveltePlayer from "svelte-player";
+  import LabelValues from '$lib/logging/LabelValues.svelte';
+  import Teams from '$lib/logging/Teams.svelte';
 
-<!--
-Section: Init and header
--->
+  let player;
+  let currentTime = 0;
+  let videoUrl = "https://www.youtube.com/watch?v=6zqTu2zXemI";
+  let videoId = '';
+  let playing = false;
+  let errorMessage = "";
+  let logsContent = "";
+  let coordinates = { x: 0, y: 0 };
+  let teams = [];
+  let activeTeam = '';
+  let activeTab = 0;
 
-```recs
-select * from csv.fc24_players
-```
+  // Define the CSV data structure for logs
+  let csvData = [
+    {
+      log_time: new Date().toISOString(),
+      video_time: 0,
+      start: '',
+      who: '',
+      what: 'kickoff',
+      zone_a: '',
+      zone_b: '',
+      target: '',
+      result: '',
+      reason: '',
+      flags: '',
+      custom: ''
+    }
+  ];
 
-<h1>FC24 Statistics</h1>
-<p>This app hosts analyses and insights to understand the <a class="link" href="https://www.ea.com/nl-nl/games/ea-sports-fc/fc-24" target="_blank">FC24</a> players and teams data better.</p>
+  // Current log entry being updated
+  let currentLogEntry = {
+    log_time: new Date().toISOString(),
+    video_time: 0,
+    start: '',
+    who: '',
+    what: 'kickoff',
+    zone_a: '',
+    zone_b: '',
+    target: '',
+    result: '',
+    reason: '',
+    flags: '',
+    custom: ''
+  };
 
-<hr class="uk-margin uk-divider-icon" />
+  // Function to get video metadata
+  const getVideoMetadata = () => {
+    if (player) {
+      currentTime = player.getCurrentTime();
+      console.log("Current Time:", currentTime);
+    }
+  };
 
-<!--
-Section: High level stats
--->
+  // Update metadata every second
+  let interval;
+  onMount(() => {
+    interval = setInterval(getVideoMetadata, 1000);
 
-```totals
-select 
-    count(*) as total_players,
-    count(distinct nationality_name) as total_countries,
-    count(distinct club_name) as total_clubs,
-    avg(age) as average_age,
-    avg(height_cm) as average_height,
-    avg(weight_kg) as average_weight,
-    avg(overall) as average_rating,
-    avg(wage_eur) as average_wage,
-    avg(potential) as average_potential,
-    avg(value_eur) as average_value
+    // Check for the 't' and 'tab' parameters in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const tParam = urlParams.get('t');
+    if (tParam) {
+      activeTeam = tParam;
+    }
 
-from ${recs} recs
-```
+    const tabParam = urlParams.get('tab');
+    if (tabParam) {
+      activeTab = parseInt(tabParam, 10);
+    }
 
-<Grid cols=5>
-    <div>
-        <BigValue
-            title="Total Players"
-            data={totals} 
-            value=total_players
-            fmt='#,##0'
-        />
+    return () => clearInterval(interval);
+  });
+
+  const togglePlaying = () => {
+    playing = !playing;
+  };
+
+  const updateVideoUrl = (event) => {
+    const newUrl = event.target.value;
+    try {
+      const url = new URL(newUrl);
+      videoUrl = newUrl;
+      errorMessage = "";
+      const urlParams = new URLSearchParams(url.search);
+      videoId = urlParams.get('v') || newUrl;
+
+      // Update logs content with the current CSV data
+      updateLogsContent();
+
+    } catch (e) {
+      errorMessage = "Invalid URL. Please enter a valid video URL.";
+    }
+  };
+
+  const updateLogsContent = () => {
+    const headers = [
+      'log_time',
+      'video_time',
+      'start',
+      'who',
+      'what',
+      'zone_a',
+      'zone_b',
+      'target',
+      'result',
+      'reason',
+      'flags',
+      'custom'
+    ];
+    const rows = csvData.map(row => headers.map(header => row[header]).join(','));
+    logsContent = [headers.join(','), ...rows].join('\n');
+  };
+
+  // Function to add the current log entry to the log
+  const addCurrentLogEntry = () => {
+    currentLogEntry.log_time = new Date().toISOString();
+    currentLogEntry.video_time = currentTime;
+    csvData.push({ ...currentLogEntry });
+    updateLogsContent();
+    console.log("Log entry added:", currentLogEntry);
+
+    // Reset current log entry
+    currentLogEntry = {
+      log_time: new Date().toISOString(),
+      video_time: 0,
+      start: '',
+      who: '',
+      what: '',
+      zone_a: '',
+      zone_b: '',
+      target: '',
+      result: '',
+      reason: '',
+      flags: '',
+      custom: ''
+    };
+  };
+
+  // Initialize logs content with the current CSV data
+  updateLogsContent();
+
+  // Function to get coordinates relative to the image
+  const getCoordinates = (event) => {
+    const rect = event.target.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+    coordinates = { x: x.toFixed(2), y: y.toFixed(2) };
+  };
+
+  // Function to handle button click
+  function setActiveTeam(event, csvFile) {
+    event.preventDefault(); // Prevent the default anchor tag behavior
+    activeTeam = csvFile;
+
+    // Update the URL without reloading the page
+    const url = new URL(window.location);
+    url.searchParams.set('t', csvFile);
+    history.pushState({}, '', url);
+  }
+
+  // Function to handle tab click
+  function setActiveTab(index) {
+    activeTab = index;
+
+    // Update the URL without reloading the page
+    const url = new URL(window.location);
+    url.searchParams.set('tab', index);
+    history.pushState({}, '', url);
+  }
+
+  // Fetch teams data from CSV
+  async function fetchTeams(csvUrl) {
+    try {
+      const response = await fetch(csvUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch CSV file: ${response.statusText}`);
+      }
+      const csvText = await response.text();
+      const lines = csvText.trim().split('\n');
+      const headers = lines[0].split(',').map(item => item.trim());
+      const teamIndex = headers.indexOf('team');
+      const csvFileIndex = headers.indexOf('csv_file');
+
+      if (teamIndex === -1 || csvFileIndex === -1) {
+        throw new Error("Expected headers 'team' and 'csv_file' not found in CSV");
+      }
+
+      teams = lines.slice(1).map(line => {
+        const columns = line.split(',').map(item => item.trim());
+        return {
+          team: columns[teamIndex],
+          csvFile: columns[csvFileIndex]
+        };
+      });
+
+      // Set active team if 't' parameter is present
+      const urlParams = new URLSearchParams(window.location.search);
+      const tParam = urlParams.get('t');
+      if (tParam) {
+        activeTeam = tParam;
+      }
+    } catch (error) {
+      console.error("Failed to load CSV data:", error);
+    }
+  }
+
+  // Fetch teams data on mount
+  onMount(() => {
+    fetchTeams('./data/teams.csv');
+  });
+
+  // Reactive statement to dynamically set the csvUrl for LabelValues
+  $: csvUrlForLabelValues = activeTeam ? `./data/teams/${activeTeam}` : '';
+
+  // Function to handle label click
+  const handleLabelClick = (field, label) => {
+    currentLogEntry[field] = label;
+    currentLogEntry.log_time = new Date().toISOString(); // Update timestamp
+    currentLogEntry.video_time = currentTime; // Update video time
+    console.log("Label clicked:", label);
+    console.log("Updated currentLogEntry:", currentLogEntry);
+  };
+</script>
+
+<div style="margin-top:-30px;">
+  <ul uk-tab>
+    <li class="{activeTab === 0 ? 'uk-active' : ''}" on:click={() => setActiveTab(0)}><a href="#">Settings</a></li>
+    <li class="{activeTab === 1 ? 'uk-active' : ''}" on:click={() => setActiveTab(1)}><a href="#">Annotate</a></li>
+    <li class="{activeTab === 2 ? 'uk-active' : ''}" on:click={() => setActiveTab(2)}><a href="#">Logs</a></li>
+  </ul>
+
+  <div class="uk-switcher uk-margin">
+    <div class="{activeTab === 0 ? 'uk-active' : ''}">
+      <div style="margin:0;" class="uk-width-1-1">
+        <label class="uk-form-label" for="form-stacked-text">Video URL</label>
+        <input class="uk-input" type="text" bind:value={videoUrl} on:input={updateVideoUrl} placeholder="Enter video URL">
+      </div>
+      <div style="margin:0;" class="uk-width-1-1">
+        <Teams csvUrl="./data/teams.csv" />
+      </div>
     </div>
-
-    <div>
-        <BigValue
-            title="Total Countries"
-            data={totals} 
-            value=total_countries
-            fmt='#,##0'
-        />
-    </div>
-
-    <div>
-        <BigValue
-            title="Total Clubs"
-            data={totals} 
-            value=total_clubs
-            fmt='#,##0'
-        />
-    </div>
-
-    <div>
-        <BigValue
-            title="Average Age"
-            data={totals} 
-            value=average_age
-            fmt='#,##0'
-        />
-    </div>
-
-    <div>
-        <BigValue
-            title="Average Height in CM"
-            data={totals} 
-            value=average_height
-            fmt='#,##0'
-        />
-    </div>
-
-    <div>
-        <BigValue
-            title="Average Weight in KG"
-            data={totals} 
-            value=average_weight
-            fmt='#,##0'
-        />
-    </div>
-
-    <div>
-        <BigValue
-            title="Average Overall Rating"
-            data={totals} 
-            value=average_rating
-            fmt='#,##0'
-        />
-    </div>
-
-    <div>
-        <BigValue
-            title="Average Potential"
-            data={totals} 
-            value=average_potential
-            fmt='#,##0'
-        />
-    </div>
-
-    <div>
-        <BigValue
-            title="Average Wage in €"
-            data={totals} 
-            value=average_wage
-            fmt='#,##0'
-        />
-    </div>
-
-    <div>
-        <BigValue
-            title="Average Value in €"
-            data={totals} 
-            value=average_value
-            fmt='#,##0'
-        />
-    </div>
-</Grid>
-
-<hr class="uk-margin uk-divider-icon" />
-
-<!--
-Section: Top 12 Players based on Rating
--->
-
-```player_potential
-select
-    player_id as pid,
-    'https://cdn.fifacm.com/content/media/imgs/fc24/players/p'|| player_id::INTEGER::VARCHAR ||'.png' as img,
-    long_name,
-    short_name,
-    club_name,
-    club_position,
-    nationality_name,
-    player_traits,
-    avg(overall) as overall_rating,
-    avg(potential) as potential_rating
-
-from ${recs} recs
-group by 1,2,3,4,5,6,7,8
-order by 9 desc
-limit 12
-```
-
-<h3>Top 12 Players based on Rating</h3>
-
-<Grid cols=3>
-    {#each player_potential as pp}
-    <div>
-        <div class="uk-card uk-card-default uk-card-body">
-            <img class="uk-preserve-width uk-border-circle uk-align-right" style="border:1px solid #ccc;" src="{pp.img}" width="80" alt="">
-            <span 
-                class="uk-preserve-width uk-border-circle uk-position-small uk-position-top-right uk-text-center" 
-                style="width:30px;height:30px;border:1px solid #ccc;padding:5px;">
-                {pp.overall_rating}
-            </span>
-            <h3 class="uk-card-title">{pp.short_name}</h3>
-            <p><a class="link" href="/{pp.club_name}/">{pp.club_name}</a> / {pp.nationality_name}</p>
+    <div class="{activeTab === 1 ? 'uk-active' : ''}">
+      <div class="uk-grid-small" uk-grid>
+        <div class="player uk-width-2-3">
+          {#if errorMessage}
+            <div class="uk-width-1-1">
+              <div class="uk-alert-danger" uk-alert>
+                <a href class="uk-alert-close" uk-close></a>
+                <p style="padding:auto 10px;">{errorMessage}</p>
+              </div>
+            </div>
+          {:else}
+            <div class="player-wrapper">
+              <SveltePlayer
+                bind:this={player}
+                url={videoUrl}
+                {playing}
+                controls={true}
+              />
+            </div>
+          {/if}
         </div>
+        <div style="margin-left:0px;padding:0;position:relative;" class="controls uk-width-1-3 uk-grid-small">
+          <div class="uk-grid-small" uk-grid> 
+            <div class="field">
+              <img src="/img/field.png" alt="Field" style="height:100%;width:100%;" on:mousemove={getCoordinates}>
+              <div class="coordinates">
+                X: {coordinates.x}, Y: {coordinates.y}
+              </div>
+            </div>
+            <div class="logging">
+              <div>
+                <div uk-grid>
+                  <div class="uk-width-auto@m">
+                    <ul class="uk-tab-left" uk-tab="connect: #component-tab-left; animation: uk-animation-fade">
+                      <li><a href="#">Start</a></li>
+                      <li><a href="#">Who</a></li>
+                      <li><a href="#">What</a></li>
+                      <li><a href="#">A</a></li>
+                      <li><a href="#">B</a></li>
+                      <li><a href="#">Target</a></li>
+                      <li><a href="#">Result</a></li>
+                      <li><a href="#">Reason</a></li>
+                      <li><a href="#">Tags</a></li>
+                      <li><a href="#">Plays</a></li>
+                    </ul>
+                  </div>
+                  <div class="uk-width-expand@m" style="padding:5px 20px;">
+                    <div id="component-tab-left" class="uk-switcher">
+                      <div>
+                        <LabelValues csvUrl="./data/start.csv" field="start" onLabelClick={handleLabelClick} />
+                      </div>
+                      <div>
+                        {#if csvUrlForLabelValues}
+                          <LabelValues csvUrl={csvUrlForLabelValues} field="who" onLabelClick={handleLabelClick} />
+                        {:else}
+                          <p>No team selected.</p>
+                        {/if}
+                      </div>
+                      <div>
+                        <LabelValues csvUrl="./data/what.csv" field="what" onLabelClick={handleLabelClick} />
+                      </div>
+                      <div>
+                        <p>Select start position on the field above.</p>
+                      </div>
+                      <div>
+                        <p>Select end position on the field above.</p>
+                      </div>
+                      <div>
+                        {#if csvUrlForLabelValues}
+                          <LabelValues csvUrl={csvUrlForLabelValues} field="target" onLabelClick={handleLabelClick} />
+                        {:else}
+                          <p>No team selected.</p>
+                        {/if}
+                      </div>
+                      <div>
+                        <LabelValues csvUrl="./data/result.csv" field="result" onLabelClick={handleLabelClick} />
+                      </div>
+                      <div>
+                        <LabelValues csvUrl="./data/reason.csv" field="reason" onLabelClick={handleLabelClick} />
+                      </div>
+                      <div>
+                        <LabelValues csvUrl="./data/tags.csv" field="tags" onLabelClick={handleLabelClick} />
+                      </div>
+                      <div>
+                        <LabelValues csvUrl="./data/plays.csv" field="plays" onLabelClick={handleLabelClick} />
+                      </div>
+                      <div></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    {/each}
-</Grid>
-
-<hr class="uk-margin uk-divider-icon">
-
-<!--
-Section: Top 20 Countries
--->
-
-```by_country
-select
-    nationality_id,
-    nationality_name, 
-    count(*) as total,
-    count(distinct club_name) as total_clubs,
-    avg(age) as average_age,
-    avg(height_cm) as average_height,
-    avg(weight_kg) as average_weight,
-    avg(overall) as average_rating,
-    avg(wage_eur) as average_wage,
-    avg(potential) as average_potential,
-    avg(value_eur) as average_value
-    
-from ${recs} recs
-group by 1,2
-order by 3 desc
-limit 20
-```
-
-<h3>Top 20 Countries</h3>
-
-<Grid cols=2>
-    <div>
-        <BarChart
-            title='Number of Players'
-            data={by_country}
-            x=nationality_name 
-            y=total 
-            swapXY=true
-            colorPalette={
-                [
-                '#06871A'
-                ]
-            }
-            renderer=svg
-        />
+    <div class="{activeTab === 2 ? 'uk-active' : ''}">
+      <pre>{logsContent}</pre>
+      <button on:click={addCurrentLogEntry}>Add Log Entry</button>
     </div>
+  </div>
+</div>
 
-    <div>
-        <BarChart
-            title='Number of Clubs'
-            data={by_country}
-            x=nationality_name 
-            y=total_clubs 
-            swapXY=true
-            colorPalette={
-                [
-                '#06871A'
-                ]
-            }
-            renderer=svg
-        />
-    </div>
-</Grid>
+<style>
+  .error-message {
+    color: #333;
+    margin-bottom: 10px;
+  }
 
-<hr class="uk-margin uk-divider-icon" />
+  .player-wrapper {
+    height: 80vh; /* Set the height to 80% of the viewport height */
+    width: 100%;  /* Ensure the player takes the full width */
+  }
 
-<!--
-Section: Top 20 Clubs - Skills
--->
+  .player-wrapper svelte-player {
+    height: 100%; /* Make sure the player component takes the full height of the wrapper */
+    width: 100%;  /* Make sure the player component takes the full width of the wrapper */
+  }
 
-```by_club
-WITH RankedClubs AS (
-    SELECT
-        club.club_name,
-        club.club_team_id,
-        AVG(club.overall)::INTEGER AS overall,
-        AVG(club.pace)::INTEGER as pace,
-        AVG(club.shooting)::INTEGER as shooting,
-        AVG(club.passing)::INTEGER as passing,
-        AVG(club.dribbling)::INTEGER as dribbling,
-        AVG(club.defending)::INTEGER as defending,
-        AVG(club.physic)::INTEGER as physic,
-        AVG(club.mentality_composure)::INTEGER as composure
+  .field {
+    position: relative; /* Ensure the coordinates container is positioned relative to the field */
+  }
 
-    FROM ${recs} club
-    GROUP BY club.club_name, club.club_team_id
-    ORDER BY overall DESC
-    LIMIT 20
-)
-SELECT
-    'score' as ph,
-    club_name,
-    club_team_id,
-    overall,
-    1 - ((MAX(overall) OVER () - overall) / (MAX(overall) OVER () - MIN(overall) OVER ())) + 0.1 as rank_overall,
-    pace,
-    1 - ((MAX(pace) OVER () - pace) / (MAX(pace) OVER () - MIN(pace) OVER ())) + 0.1 as rank_pace,
-    shooting,
-    1 - ((MAX(shooting) OVER () - shooting) / (MAX(shooting) OVER () - MIN(shooting) OVER ())) + 0.1 as rank_shooting,
-    passing,
-    1 - ((MAX(passing) OVER () - passing) / (MAX(passing) OVER () - MIN(passing) OVER ())) + 0.1 as rank_passing,
-    dribbling,
-    1 - ((MAX(dribbling) OVER () - dribbling) / (MAX(dribbling) OVER () - MIN(dribbling) OVER ())) + 0.1 as rank_dribbling,
-    defending,
-    1 - ((MAX(defending) OVER () - defending) / (MAX(defending) OVER () - MIN(defending) OVER ())) + 0.1 as rank_defending,
-    physic,
-    1 - ((MAX(physic) OVER () - physic) / (MAX(physic) OVER () - MIN(physic) OVER ())) + 0.1 as rank_physic,
-    composure,
-    1 - ((MAX(composure) OVER () - composure) / (MAX(composure) OVER () - MIN(composure) OVER ())) + 0.1 as rank_composure
+  .field img {
+    height: 100%; /* Make sure the image takes the full height of the div */
+    width: 100%;  /* Make sure the image takes the full width of the div */
+    object-fit: cover; /* Cover the entire div with the image */
+  }
 
-FROM RankedClubs
-ORDER BY overall DESC
-```
+  .coordinates {
+    position: absolute;
+    top: -24px;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    z-index: 1000;
+    font-size:0.8em;
+  }
 
-<h3>Top 20 Clubs - Skills</h3>
-
-<table class="uk-table uk-table-small uk-table-divider">
-    <thead>
-        <tr>
-            <th style="width:2%;text-align:center;"></th>
-            <th>Club</th>
-            <th style="width:8%;text-align:center;">Overall</th>
-            <th style="width:8%;text-align:center;">Pace</th>
-            <th style="width:8%;text-align:center;">Shooting</th>
-            <th style="width:8%;text-align:center;">Passing</th>
-            <th style="width:8%;text-align:center;">Dribbling</th>
-            <th style="width:8%;text-align:center;">Defending</th>
-        </tr>
-    </thead>
-    <tbody>
-    {#each by_club as hm}
-        <tr>
-            <td style="text-align:center;">
-            <img class="uk-preserve-width uk-border-circle" 
-                src="https://fifastatic.fifaindex.com/FIFA24/teams/light/{hm.club_team_id}.png" 
-            width="24" height="24" alt="">
-            </td>
-            <td>{hm.club_name}</td>
-            <td style="text-align:center;background-color:rgba(0,163,20,{hm.rank_overall});">{hm.overall}</td>
-            <td style="text-align:center;background-color:rgba(0,163,20,{hm.rank_pace});">{hm.pace}</td>
-            <td style="text-align:center;background-color:rgba(0,163,20,{hm.rank_shooting});">{hm.shooting}</td>
-            <td style="text-align:center;background-color:rgba(0,163,20,{hm.rank_passing});">{hm.passing}</td>
-            <td style="text-align:center;background-color:rgba(0,163,20,{hm.rank_dribbling});">{hm.dribbling}</td>
-            <td style="text-align:center;background-color:rgba(0,163,20,{hm.rank_defending});">{hm.defending}</td>
-        </tr>
-    {/each}
-    </tbody>
-</table>
+  .uk-label {
+    font-size:0.9em;
+  }
+</style>

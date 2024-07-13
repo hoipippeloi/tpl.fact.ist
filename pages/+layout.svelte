@@ -14,7 +14,7 @@
 </script>
 
 <svelte:head>
-	<title>fc24.fact.ist</title>
+	<title>code.voetlab.nl</title>
 </svelte:head>
 
 <EvidenceDefaultLayout {data}
@@ -24,7 +24,7 @@
   	githubRepo='https://github.com/hoipippeloi/tpl.fact.ist'
   	hideSidebar=true
   	fullWidth=true
-  	maxWidth=1440
+  	maxWidth=1920
 	hideTOC=true
 	>
 

@@ -89,6 +89,10 @@ div > main > article {
   Evidence styling 
 ##################################################### */
 
+body > div:nth-child(2) > div > div > main > div {
+  display: none;
+}
+
 div.search-container {
   width:100% !important;
   margin-bottom:30px !important;
