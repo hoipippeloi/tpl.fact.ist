@@ -14,7 +14,7 @@
 </script>
 
 <svelte:head>
-	<title>code.voetlab.nl</title>
+	<title>tpl.fact.ist</title>
 </svelte:head>
 
 <EvidenceDefaultLayout {data}
